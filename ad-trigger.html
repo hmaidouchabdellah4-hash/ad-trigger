@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ad Generator Trigger</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; max-width: 600px; margin: auto; }
+    input, textarea, button { width: 100%; margin-top: 1em; padding: 0.75em; font-size: 1em; }
+    pre { background: #f9f9f9; padding: 1em; white-space: pre-wrap; word-wrap: break-word; }
+  </style>
+</head>
+<body>
+  <h1>Trigger Ad Generation</h1>
+  <input id="hero" placeholder="Hero Image URL" />
+  <textarea id="storyboard" placeholder="Storyboard (optional)"></textarea>
+  <button onclick="submitAd()">Submit to /ad-build</button>
+  <pre id="response"></pre>
+
+  <script>
+    async function submitAd() {
+      const heroImageUrl = document.getElementById('hero').value;
+      const storyboard = document.getElementById('storyboard').value;
+
+      const payload = {
+        heroImageUrl,
+        storyboard,
+        runway_key: "sk-runway-xxxxx",
+        openai_key: "sk-openai-xxxxx",
+        worker_url: "https://your-worker-domain.com",
+        use_extender: true
+      };
+
+      try {
+        const res = await fetch('/webhook/ad-build', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        document.getElementById('response').textContent = 'Error sending request';
+      }
+    }
+  </script>
+</body>
+</html>
